@@ -2,9 +2,10 @@
 mod file;
 mod time;
 
-use std::{fmt, panic::Location, process};
+use std::{fmt, io, panic::Location, process};
 
 pub use chrono::FixedOffset;
+use crossterm::{cursor::MoveToColumn, execute};
 
 fn mount_log(tag: &str, message: impl fmt::Display, time_zone: Option<&FixedOffset>) -> String {
     format!(
@@ -18,12 +19,14 @@ fn mount_log(tag: &str, message: impl fmt::Display, time_zone: Option<&FixedOffs
 pub struct Logger {
     write_in_files: bool,
     time_zone: Option<FixedOffset>,
+    column_two: u16,
 }
 impl Logger {
-    pub fn new(write_in_files: bool, time_zone: Option<FixedOffset>) -> Logger {
+    pub fn new(write_in_files: bool, time_zone: Option<FixedOffset>, column_two: u16) -> Logger {
         Logger {
             write_in_files,
             time_zone,
+            column_two,
         }
     }
 
@@ -87,6 +90,15 @@ impl Logger {
         if self.write_in_files {
             file::write(&content, time_zone)
         }
+    }
+
+    pub fn print_fail(&self) {
+        let _ = execute!(io::stdout(), MoveToColumn(self.column_two));
+        self.println("FAIL ❌");
+    }
+    pub fn print_ok(&self) {
+        let _ = execute!(io::stdout(), MoveToColumn(self.column_two));
+        self.println("OK ✅");
     }
 
     #[track_caller]
