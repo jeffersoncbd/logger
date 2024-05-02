@@ -62,7 +62,7 @@ impl Logger {
     pub fn log_error(&self, tag: &str, description: impl fmt::Display, error: impl fmt::Display) {
         let time_zone = self.get_time_zone();
         let log = format!(
-            "\n❌ [{}] {} ERROR: {}\n❌ {}\n",
+            "\n❌ [{}] {} ERROR:\n❌ {}\n❌ {}\n",
             time::now(time_zone).get_date_and_hour(),
             tag,
             description,
@@ -106,7 +106,7 @@ impl Logger {
         let location = Location::caller();
         let time_zone = self.get_time_zone();
         let log = format!(
-            "\n❌ [{}] CRITICAL ERROR - {}: {}\n❌ {}\n",
+            "\n❌ [{}] CRITICAL ERROR - {}:\n❌ {}\n❌ {}\n",
             time::now(time_zone).get_date_and_hour(),
             location,
             description,
